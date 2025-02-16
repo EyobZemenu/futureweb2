@@ -1,73 +1,107 @@
-body { margin: 0;
-     overflow: hidden;
-     background-image: url('background2.jpg');
-     }
-canvas { display: block; }
-#signInModal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    display: none;
-    text-align: center;
-}
-#signInModal input {
-    margin-bottom: 10px;
-    padding: 10px;
-    font-size: 16px;
-    width: 200px;
-}
-#signInModal button {
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #333;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-#signInModal button:hover {
-    background-color: #555;
-}
-#restartButton {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #333;
-    color: white;
-    border: none;
-    cursor: pointer;
-    display: none;
-}
-#score, #highScore {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    color: white;
-    font-size: 24px;
-}
-#highScore {
-    top: 60px; /* Position the high score under the score */
-}
-#difficultyButtons {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    gap: 10px;
-}
-.difficultyButton {
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #333;
-    color: white;
-    border: none;
-    cursor: pointer;
+ body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        #signInModal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #signInModal h2 {
+            margin: 0 0 10px 0;
+        }
+
+        #username {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            margin-bottom: 10px;
+        }
+
+        #signInButton {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #signInButton:hover {
+            background-color: #45a049;
+        }
+
+        #difficultyButtons {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: none;
+            flex-direction: column;
+        }
+
+        .difficultyButton {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .difficultyButton:hover {
+            background-color: #007B8F;
+        }
+
+        #restartButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            display: none;
+        }
+
+        #restartButton:hover {
+            background-color: #e53935;
+        }
+
+        #score, #highScore {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 20px;
+            color: white;
+            z-index: 100;
+        }
+
+        #highScore {
+            top: 50px;
+        }
+
+        canvas {
+            display: block;
+            background-color: #000;
+        }
 }
 .difficultyButton:hover {
     background-color: #555;
