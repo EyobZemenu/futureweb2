@@ -1,0 +1,74 @@
+body { margin: 0;
+     overflow: hidden;
+     background-image: url('background2.jpg');
+     }
+canvas { display: block; }
+#signInModal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+    text-align: center;
+}
+#signInModal input {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 16px;
+    width: 200px;
+}
+#signInModal button {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+#signInModal button:hover {
+    background-color: #555;
+}
+#restartButton {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: none;
+}
+#score, #highScore {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    font-size: 24px;
+}
+#highScore {
+    top: 60px; /* Position the high score under the score */
+}
+#difficultyButtons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 10px;
+}
+.difficultyButton {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.difficultyButton:hover {
+    background-color: #555;
+}

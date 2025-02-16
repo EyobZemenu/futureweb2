@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spaceship Dodge Game</title>
+<link rel="stylesheet" href="style3.css">
+</head>
+<body>
+    <div id="signInModal">
+        <h2>Sign In</h2>
+        <input type="text" id="username" placeholder="Enter your name" />
+        <br/>
+        <button id="signInButton">Sign In</button>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="difficultyButtons">
+        <button class="difficultyButton" id="easyButton">Easy</button>
+        <button class="difficultyButton" id="mediumButton">Medium</button>
+        <button class="difficultyButton" id="hardButton">Hard</button>
+    </div>
+    <button id="restartButton">Restart</button>
+    <div id="score">Score: 0</div>
+    <div id="highScore">High Score: 0</div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Spaceship Image
+        let spaceshipImage = new Image();
+        spaceshipImage.src = 'https://upload.wikimedia.org/wikipedia/commons/9/99/Spaceship_icon.svg'; // Spaceship image URL
+        let spaceshipImageLoaded = false;
+        spaceshipImage.onload = function() {
+            spaceshipImageLoaded = true;
+        };
+
+        let spaceship = { x: canvas.width / 2, y: canvas.height - 100, width: 50, height: 50 }; // Smaller spaceship
+        let asteroids = [];
+        let bullets = [];
+        let keys = {};
+        let gameOver = false;
+        let score = 0;
+        let highScore = localStorage.getItem("highScore") || 0;
+        let asteroidSpeed = 2; // Default speed for easy
+        let difficulty = null;
+        let spaceshipSpeed = 1; // Default spaceship speed
+        let username = "";
+
+        const restartButton = document.getElementById("restartButton");
+        const scoreDiv = document.getElementById("score");
+        const highScoreDiv = document.getElementById("highScore");
+
+        const easyButton = document.getElementById("easyButton");
+        const mediumButton = document.getElementById("mediumButton");
+        const hardButton = document.getElementById("hardButton");
+
+        const difficultyButtons = document.getElementById("difficultyButtons");
+        const signInModal = document.getElementById("signInModal");
+        const signInButton = document.getElementById("signInButton");
+        const usernameInput = document.getElementById("username");
+
+        signInButton.addEventListener("click", () => {
+            username = usernameInput.value.trim();
+            if (username) {
+                signInModal.style.display = "none";
+                showDifficultyButtons();
+            } else {
+                alert("Please enter your name to sign in.");
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            keys[event.code] = true;
+            if (event.code === "Space") {
+                shoot();
+            }
+        });
+        document.addEventListener("keyup", (event) => keys[event.code] = false);
+
+        restartButton.addEventListener("click", restartGame);
+        easyButton.addEventListener("click", () => setDifficulty("easy"));
+        mediumButton.addEventListener("click", () => setDifficulty("medium"));
+        hardButton.addEventListener("click", () => setDifficulty("hard"));
+
+        function shoot() {
+            bullets.push({ x: spaceship.x + spaceship.width / 2 - 5, y: spaceship.y, width: 5, height: 10, speed: 7 });
+        }
+
+        function spawnAsteroid() {
+            if (!difficulty) return; // Wait until difficulty is selected
+            let size = Math.random() * 30 + 20;
+            asteroids.push({ x: Math.random() * canvas.width, y: -size, width: size, height: size, speed: asteroidSpeed });
+        }
+
+        function update() {
+            // Spaceship movement
+            if (keys["ArrowLeft"] && spaceship.x > 0) spaceship.x -= spaceshipSpeed; // Increased speed
+            if (keys["ArrowRight"] && spaceship.x < canvas.width - spaceship.width) spaceship.x += spaceshipSpeed; // Increased speed
+            if (keys["ArrowUp"] && spaceship.y > 0) spaceship.y -= spaceshipSpeed;
+            if (keys["ArrowDown"] && spaceship.y < canvas.height - spaceship.height) spaceship.y += spaceshipSpeed;
+
+            // Asteroid movement
+            asteroids.forEach(asteroid => asteroid.y += asteroid.speed);
+            asteroids = asteroids.filter(asteroid => asteroid.y < canvas.height);
+
+            // Bullet movement
+            bullets.forEach(bullet => bullet.y -= bullet.speed);
+            bullets = bullets.filter(bullet => bullet.y > 0);
+
+            // Bullet and asteroid collision
+            bullets.forEach((bullet, bulletIndex) => {
+                asteroids.forEach((asteroid, asteroidIndex) => {
+                    if (
+                        bullet.x < asteroid.x + asteroid.width &&
+                        bullet.x + bullet.width > asteroid.x &&
+                        bullet.y < asteroid.y + asteroid.height &&
+                        bullet.y + bullet.height > asteroid.y
+                    ) {
+                        asteroids.splice(asteroidIndex, 1); // Remove asteroid
+                        bullets.splice(bulletIndex, 1); // Remove bullet
+                        score += 10; // Increase score for destroying an asteroid
+                    }
+                });
+            });
+
+            // Collision between spaceship and asteroids
+            asteroids.forEach(asteroid => {
+                if (
+                    spaceship.x < asteroid.x + asteroid.width &&
+                    spaceship.x + spaceship.width > asteroid.x &&
+                    spaceship.y < asteroid.y + asteroid.height &&
+                    spaceship.y + spaceship.height > asteroid.y
+                ) {
+                    gameOver = true;
+                }
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw asteroids
+            ctx.fillStyle = "red";
+            asteroids.forEach(asteroid => ctx.fillRect(asteroid.x, asteroid.y, asteroid.width, asteroid.height));
+
+            // Draw bullets
+            ctx.fillStyle = "yellow";
+            bullets.forEach(bullet => ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height));
+
+            // Draw spaceship (if not game over)
+            if (!gameOver) {
+                if (spaceshipImageLoaded) {
+                    ctx.drawImage(spaceshipImage, spaceship.x, spaceship.y, spaceship.width, spaceship.height); // Draw spaceship image
+                } else {
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(spaceship.x, spaceship.y, spaceship.width, spaceship.height);
+                }
+            }
+
+            // Display Game Over text
+            if (gameOver) {
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem("highScore", highScore); // Save the new high score
+                }
+                ctx.fillStyle = "white";
+                ctx.font = "40px Arial";
+                ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
+                ctx.font = "24px Arial";
+                ctx.fillText("High Score: " + highScore, canvas.width / 2 - 100, canvas.height / 2 + 40);
+                return;
+            }
+
+            // Display current score
+            scoreDiv.textContent = "Score: " + score;
+            highScoreDiv.textContent = "High Score: " + highScore;
+
+            requestAnimationFrame(loop);
+        }
+
+        function loop() {
+            update();
+            draw();
+        }
+
+        function restartGame() {
+            spaceship = { x: canvas.width / 2, y: canvas.height - 100, width: 50, height: 50 }; // Reset size
+            asteroids = [];
+            bullets = [];
+            keys = {};
+            gameOver = false;
+            score = 0;
+            loop();
+        }
+
+        function setDifficulty(level) {
+            if (level === "easy") {
+                asteroidSpeed = 2;
+                spaceshipSpeed = 3; // Faster movement for easy
+            } else if (level === "medium") {
+                asteroidSpeed = 4;
+                spaceshipSpeed = 4; // Faster movement for medium
+            } else if (level === "hard") {
+                asteroidSpeed = 6;
+                spaceshipSpeed = 5; // Faster movement for hard
+            }
+            difficulty = level;
+            difficultyButtons.style.display = "none"; // Hide the difficulty buttons after selection
+            restartButton.style.display = "inline"; // Show restart button
+            setInterval(spawnAsteroid, 1000); // Ensure asteroids spawn continuously
+            loop(); // Start the game loop
+        }
+
+        function showDifficultyButtons() {
+            difficultyButtons.style.display = "flex"; // Show difficulty buttons after sign-in
+        }
+
+        setInterval(spawnAsteroid, 1000); // Initial spawn of asteroids (when difficulty is selected)
+    </script>
+</body>
+</html>
