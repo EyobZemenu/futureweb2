@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spaceship Dodge Game</title>
-<link rel="stylesheet" href="style3.css">
 </head>
 <body>
     <div id="signInModal">
@@ -187,13 +186,21 @@
         }
 
         function restartGame() {
+            // Reset spaceship to its initial position and size
             spaceship = { x: canvas.width / 2, y: canvas.height - 100, width: 50, height: 50 }; // Reset size
+
+            // Reset game variables
             asteroids = [];
             bullets = [];
             keys = {};
             gameOver = false;
             score = 0;
-            loop();
+
+            // Reset the difficulty-related values
+            asteroidSpeed = 2;  // Default speed for easy
+            spaceshipSpeed = 1; // Default spaceship speed
+
+            loop(); // Restart the game loop
         }
 
         function setDifficulty(level) {
@@ -222,3 +229,4 @@
     </script>
 </body>
 </html>
+
